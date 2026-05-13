@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Ticket #{{ ticket.id }} - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'lista_tickets' %}">Tickets</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'detalle_ticket' ticket.id %}">Ticket #{{ ticket.id }}</a></li>
+            <li class="breadcrumb-item active">Eliminar</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    Confirmar Eliminación
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>¡Advertencia!</strong> Esta acción no se puede deshacer.
+                </div>
+                
+                <p class="lead">¿Está seguro que desea eliminar este ticket?</p>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">#{{ ticket.id }} - {{ ticket.titulo }}</h5>
+                        <p class="card-text text-muted">{{ ticket.descripcion|truncatewords:20 }}</p>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Cliente:</small><br>
+                                <strong>{{ ticket.cliente.nombre }}</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Estado:</small><br>
+                                <span class="badge badge-estado-{{ ticket.estado }}">
+                                    {{ ticket.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <small class="text-muted">Prioridad:</small><br>
+                                <span class="badge badge-prioridad-{{ ticket.prioridad }}">
+                                    {{ ticket.get_prioridad_display }}
+                                </span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Fecha:</small><br>
+                                <strong>{{ ticket.fecha_creacion|date:"d/m/Y" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'detalle_ticket' ticket.id %}" class="btn btn-secondary btn-custom">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-custom">
+                            <i class="bi bi-trash"></i> Sí, Eliminar Ticket
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

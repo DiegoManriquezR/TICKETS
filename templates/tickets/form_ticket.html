@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }} - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'lista_tickets' %}">Tickets</a></li>
+            <li class="breadcrumb-item active">{{ titulo }}</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-{% if ticket %}pencil{% else %}plus-circle{% endif %}"></i> 
+                    {{ titulo }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.titulo.id_for_label }}" class="form-label">
+                            <i class="bi bi-type"></i> Título del Ticket *
+                        </label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.titulo.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Escriba un título descriptivo del problema (mínimo 10 caracteres)
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                            <i class="bi bi-card-text"></i> Descripción del Problema *
+                        </label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.descripcion.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Describa detalladamente el problema o incidencia (mínimo 20 caracteres)
+                        </small>
+                    </div>
+                    
+                    {% if not ticket %}
+                    <div class="mb-3">
+                        <label for="{{ form.cliente.id_for_label }}" class="form-label">
+                            <i class="bi bi-person"></i> Cliente *
+                        </label>
+                        {{ form.cliente }}
+                        {% if form.cliente.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.cliente.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Seleccione el cliente que reporta el problema
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.prioridad.id_for_label }}" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Prioridad
+                            </label>
+                            {{ form.prioridad }}
+                            {% if form.prioridad.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.prioridad.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                <i class="bi bi-flag"></i> Estado
+                            </label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.estado.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.tecnico_asignado.id_for_label }}" class="form-label">
+                            <i class="bi bi-person-check"></i> Técnico Asignado
+                        </label>
+                        {{ form.tecnico_asignado }}
+                        {% if form.tecnico_asignado.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.tecnico_asignado.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Opcional: Asigne un técnico responsable del ticket
+                        </small>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Nota:</strong> Los campos marcados con (*) son obligatorios
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% if ticket %}{% url 'detalle_ticket' ticket.id %}{% else %}{% url 'lista_tickets' %}{% endif %}" 
+                           class="btn btn-secondary btn-custom">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="bi bi-save"></i> 
+                            {% if ticket %}Actualizar Ticket{% else %}Crear Ticket{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Ayuda -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-question-circle"></i> Ayuda</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-2"><strong>Niveles de Prioridad:</strong></p>
+                <ul class="small">
+                    <li><span class="badge bg-success">Baja:</span> Problemas menores que no afectan operaciones críticas</li>
+                    <li><span class="badge bg-warning text-dark">Media:</span> Problemas que afectan el trabajo normal</li>
+                    <li><span class="badge bg-orange">Alta:</span> Problemas urgentes que requieren atención pronta</li>
+                    <li><span class="badge bg-danger">Crítica:</span> Problemas que detienen operaciones críticas</li>
+                </ul>
+                
+                <p class="mb-2 mt-3"><strong>Estados del Ticket:</strong></p>
+                <ul class="small">
+                    <li><span class="badge bg-info">Abierto:</span> Ticket recién creado, pendiente de asignación</li>
+                    <li><span class="badge bg-primary">En Proceso:</span> Ticket asignado y siendo trabajado</li>
+                    <li><span class="badge bg-success">Resuelto:</span> Problema solucionado, pendiente de confirmación</li>
+                    <li><span class="badge bg-secondary">Cerrado:</span> Ticket finalizado y confirmado</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge-orange {
+    background-color: #fd7e14;
+}
+</style>
+{% endblock %}

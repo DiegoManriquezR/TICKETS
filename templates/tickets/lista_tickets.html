@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Tickets - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2"><i class="bi bi-ticket-perforated"></i> Gestión de Tickets</h1>
+    <a href="{% url 'crear_ticket' %}" class="btn btn-primary btn-custom">
+        <i class="bi bi-plus-circle"></i> Nuevo Ticket
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros de Búsqueda</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'lista_tickets' %}">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    {{ form.estado }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Prioridad</label>
+                    {{ form.prioridad }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Técnico</label>
+                    {{ form.tecnico }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    {{ form.buscar }}
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary btn-custom">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+                <a href="{% url 'lista_tickets' %}" class="btn btn-outline-secondary btn-custom">
+                    <i class="bi bi-x-circle"></i> Limpiar Filtros
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de tickets -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="bi bi-list-ul"></i> Lista de Tickets 
+            <span class="badge bg-primary">{{ tickets.count }}</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if tickets %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="25%">Título</th>
+                        <th width="15%">Cliente</th>
+                        <th width="10%">Prioridad</th>
+                        <th width="10%">Estado</th>
+                        <th width="15%">Técnico</th>
+                        <th width="10%">Fecha</th>
+                        <th width="10%" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td><strong>#{{ ticket.id }}</strong></td>
+                        <td>
+                            <a href="{% url 'detalle_ticket' ticket.id %}" class="text-decoration-none">
+                                {{ ticket.titulo|truncatewords:6 }}
+                            </a>
+                        </td>
+                        <td>
+                            <i class="bi bi-person"></i> {{ ticket.cliente.nombre }}
+                            {% if ticket.cliente.empresa %}
+                            <br><small class="text-muted">{{ ticket.cliente.empresa }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-prioridad-{{ ticket.prioridad }}">
+                                <i class="bi bi-{% if ticket.prioridad == 'critica' %}exclamation-triangle-fill{% elif ticket.prioridad == 'alta' %}exclamation-circle-fill{% elif ticket.prioridad == 'media' %}dash-circle-fill{% else %}info-circle-fill{% endif %}"></i>
+                                {{ ticket.get_prioridad_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-estado-{{ ticket.estado }}">
+                                {{ ticket.get_estado_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if ticket.tecnico_asignado %}
+                                <i class="bi bi-person-check"></i> {{ ticket.tecnico_asignado.username }}
+                            {% else %}
+                                <span class="text-muted"><i class="bi bi-person-x"></i> Sin asignar</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small>{{ ticket.fecha_creacion|date:"d/m/Y" }}</small>
+                            <br>
+                            <small class="text-muted">{{ ticket.fecha_creacion|date:"H:i" }}</small>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'detalle_ticket' ticket.id %}" 
+                                   class="btn btn-outline-info" 
+                                   title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'editar_ticket' ticket.id %}" 
+                                   class="btn btn-outline-warning" 
+                                   title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_ticket' ticket.id %}" 
+                                   class="btn btn-outline-danger" 
+                                   title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <p class="mt-3 text-muted">No se encontraron tickets con los filtros aplicados</p>
+            <a href="{% url 'crear_ticket' %}" class="btn btn-primary btn-custom mt-2">
+                <i class="bi bi-plus-circle"></i> Crear primer ticket
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

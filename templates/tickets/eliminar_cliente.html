@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Cliente - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'lista_clientes' %}">Clientes</a></li>
+            <li class="breadcrumb-item active">Eliminar</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    Confirmar Eliminación
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>¡Advertencia!</strong> Esta acción no se puede deshacer.
+                </div>
+                
+                <p class="lead">¿Está seguro que desea eliminar este cliente?</p>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-person-circle"></i> {{ cliente.nombre }}
+                        </h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12 mb-2">
+                                <small class="text-muted">Email:</small><br>
+                                <strong>{{ cliente.email }}</strong>
+                            </div>
+                            {% if cliente.telefono %}
+                            <div class="col-12 mb-2">
+                                <small class="text-muted">Teléfono:</small><br>
+                                <strong>{{ cliente.telefono }}</strong>
+                            </div>
+                            {% endif %}
+                            {% if cliente.empresa %}
+                            <div class="col-12 mb-2">
+                                <small class="text-muted">Empresa:</small><br>
+                                <strong>{{ cliente.empresa }}</strong>
+                            </div>
+                            {% endif %}
+                            <div class="col-12">
+                                <small class="text-muted">Tickets asociados:</small><br>
+                                <span class="badge bg-info">{{ cliente.tickets.count }} ticket(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'lista_clientes' %}" class="btn btn-secondary btn-custom">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-custom">
+                            <i class="bi bi-trash"></i> Sí, Eliminar Cliente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

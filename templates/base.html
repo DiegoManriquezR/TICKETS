@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Tickets - DEVSCURICO{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --dark-bg: #1a1a1a;
+            --dark-secondary: #2d2d2d;
+            --dark-card: #252525;
+            --border-dark: #3a3a3a;
+            --text-white: #ffffff;
+            --text-gray: #b0b0b0;
+            --red-primary: #dc3545;
+            --red-hover: #c82333;
+            --red-dark: #bd2130;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        body {
+            min-height: 100vh;
+            background-color: var(--dark-bg) !important;
+            color: var(--text-white) !important;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            min-height: 100vh;
+        }
+        
+        /* SIDEBAR */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            border-right: 1px solid var(--border-dark);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--text-gray);
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--text-white);
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--red-primary);
+            color: var(--text-white);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar h4 {
+            color: var(--text-white) !important;
+        }
+        
+        .sidebar .text-white-50 {
+            color: var(--text-gray) !important;
+        }
+        
+        /* NAVBAR */
+        .navbar-custom {
+            background: var(--dark-card);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border-dark);
+        }
+        
+        /* CARDS */
+        .card {
+            background-color: var(--dark-card) !important;
+            border: 1px solid var(--border-dark) !important;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: var(--text-white) !important;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .card-header {
+            background-color: var(--dark-secondary) !important;
+            border-bottom: 1px solid var(--border-dark) !important;
+            color: var(--text-white) !important;
+        }
+        
+        .card-body {
+            color: var(--text-white) !important;
+        }
+        
+        /* BADGES DE PRIORIDAD */
+        .badge-prioridad-baja {
+            background-color: #28a745;
+        }
+        
+        .badge-prioridad-media {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .badge-prioridad-alta {
+            background-color: #fd7e14;
+        }
+        
+        .badge-prioridad-critica {
+            background-color: #dc3545;
+        }
+        
+        /* BADGES DE ESTADO */
+        .badge-estado-abierto {
+            background-color: #17a2b8;
+        }
+        
+        .badge-estado-en_proceso {
+            background-color: #007bff;
+        }
+        
+        .badge-estado-resuelto {
+            background-color: #28a745;
+        }
+        
+        .badge-estado-cerrado {
+            background-color: #6c757d;
+        }
+        
+        /* STAT CARDS */
+        .stat-card {
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            background-color: var(--dark-card) !important;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+            background-color: var(--dark-secondary) !important;
+        }
+        
+        .stat-card.primary {
+            border-left-color: var(--red-primary);
+        }
+        
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .stat-card.danger {
+            border-left-color: #dc3545;
+        }
+        
+        .stat-card.info {
+            border-left-color: #0dcaf0;
+        }
+        
+        /* BOTONES ROJOS */
+        .btn-custom,
+        .btn-primary {
+            background-color: var(--red-primary) !important;
+            border-color: var(--red-primary) !important;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--text-white) !important;
+        }
+        
+        .btn-custom:hover,
+        .btn-primary:hover {
+            background-color: var(--red-hover) !important;
+            border-color: var(--red-hover) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: var(--dark-secondary) !important;
+            border-color: var(--border-dark) !important;
+            color: var(--text-white) !important;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #3a3a3a !important;
+            border-color: #4a4a4a !important;
+        }
+        
+        /* BOTONES OUTLINE */
+        .btn-outline-primary {
+            color: var(--red-primary) !important;
+            border-color: var(--red-primary) !important;
+            background-color: transparent !important;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--red-primary) !important;
+            color: var(--text-white) !important;
+        }
+        
+        .btn-outline-secondary {
+            color: var(--text-gray) !important;
+            border-color: var(--border-dark) !important;
+            background-color: transparent !important;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--dark-secondary) !important;
+            color: var(--text-white) !important;
+            border-color: var(--border-dark) !important;
+        }
+        
+        .btn-outline-info,
+        .btn-outline-warning,
+        .btn-outline-danger {
+            background-color: var(--dark-card) !important;
+        }
+        
+        /* TABLAS */
+        .table {
+            color: var(--text-white) !important;
+        }
+        
+        .table-light {
+            background-color: var(--dark-secondary) !important;
+            color: var(--text-white) !important;
+        }
+        
+        .table-hover tbody tr {
+            background-color: var(--dark-card);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(220, 53, 69, 0.15) !important;
+        }
+        
+        .table td, .table th {
+            border-color: var(--border-dark) !important;
+        }
+        
+        /* FORMULARIOS */
+        .form-control,
+        .form-select {
+            background-color: var(--dark-secondary) !important;
+            border-color: var(--border-dark) !important;
+            color: var(--text-white) !important;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--dark-secondary) !important;
+            border-color: var(--red-primary) !important;
+            color: var(--text-white) !important;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-gray) !important;
+        }
+        
+        .form-label {
+            color: var(--text-white) !important;
+        }
+        
+        .form-text,
+        .form-text.text-muted {
+            color: var(--text-gray) !important;
+        }
+        
+        .input-group-text {
+            background-color: var(--dark-secondary) !important;
+            border-color: var(--border-dark) !important;
+            color: var(--text-white) !important;
+        }
+        
+        /* ALERTS */
+        .alert {
+            border: 1px solid var(--border-dark) !important;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.2) !important;
+            color: #4ade80 !important;
+            border-color: #28a745 !important;
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2) !important;
+            color: #f87171 !important;
+            border-color: var(--red-primary) !important;
+        }
+        
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.2) !important;
+            color: #fbbf24 !important;
+            border-color: #ffc107 !important;
+        }
+        
+        .alert-info {
+            background-color: rgba(13, 202, 240, 0.2) !important;
+            color: #38bdf8 !important;
+            border-color: #0dcaf0 !important;
+        }
+        
+        /* TEXT COLORS */
+        .text-muted {
+            color: var(--text-gray) !important;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-white) !important;
+        }
+        
+        /* BREADCRUMB */
+        .breadcrumb {
+            background-color: var(--dark-secondary) !important;
+        }
+        
+        .breadcrumb-item a {
+            color: var(--red-primary) !important;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--text-gray) !important;
+        }
+        
+        /* LIST GROUP */
+        .list-group-item {
+            background-color: var(--dark-card) !important;
+            border-color: var(--border-dark) !important;
+            color: var(--text-white) !important;
+        }
+        
+        /* LINKS */
+        a {
+            color: var(--red-primary) !important;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            color: var(--red-hover) !important;
+        }
+        
+        /* FOOTER */
+        footer {
+            background-color: var(--dark-secondary);
+            color: var(--text-white);
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid var(--border-dark);
+        }
+        
+        /* INVALID FEEDBACK */
+        .invalid-feedback {
+            color: #f87171 !important;
+        }
+        
+        /* BADGES */
+        .badge {
+            color: var(--text-white) !important;
+        }
+        
+        /* LOGIN PAGE */
+        .login-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+        }
+        
+        /* MAIN CONTENT */
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            flex: 1;
+        }
+        
+        .content-area {
+            flex: 1;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="container-fluid main-wrapper">
+        <div class="row w-100">
+            <!-- Sidebar -->
+            <nav class="col-md-2 col-lg-2 d-md-block sidebar collapse" id="sidebarMenu">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white fw-bold">DEVSCURICO</h4>
+                        <p class="text-white-50 small">Sistema de Tickets</p>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                                <i class="bi bi-speedometer2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'tickets' in request.path %}active{% endif %}" href="{% url 'lista_tickets' %}">
+                                <i class="bi bi-ticket-perforated"></i>
+                                Tickets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'clientes' in request.path %}active{% endif %}" href="{% url 'lista_clientes' %}">
+                                <i class="bi bi-people"></i>
+                                Clientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'informes' %}active{% endif %}" href="{% url 'informes' %}">
+                                <i class="bi bi-graph-up"></i>
+                                Informes
+                            </a>
+                        </li>
+                        
+                        <hr class="my-3" style="border-color: rgba(255,255,255,0.2);">
+                        
+                        {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">
+                                <i class="bi bi-gear"></i>
+                                Administración
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-4 p-3 text-center">
+                        <div class="text-white-50 small">
+                            <i class="bi bi-person-circle fs-3 d-block mb-2" style="color: var(--text-white);"></i>
+                            <strong class="text-white">{{ user.username }}</strong>
+                            <br>
+                            <span class="badge bg-light text-dark mt-2">
+                                {% if user.is_superuser %}
+                                    Administrador
+                                {% elif user.is_staff %}
+                                    Técnico
+                                {% else %}
+                                    Usuario
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 main-content-wrapper">
+                <!-- Top Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+                    <div class="container-fluid">
+                        <span class="text-white fw-bold">
+                            <i class="bi bi-hand-thumbs-up"></i> BIENVENIDO
+                        </span>
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" style="border-color: var(--border-dark);">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <span class="text-muted">
+                            <i class="bi bi-calendar3"></i>
+                            <span id="fecha-actual"></span>
+                        </span>
+                    </div>
+                </nav>
+                
+                <!-- Messages -->
+                {% if messages %}
+                <div class="container-fluid">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: invert(1);"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Page Content -->
+            <div class="container-fluid py-3 content-area">
+                {% block content %}{% endblock %}
+            </div>
+                 
+                <!-- Footer -->
+                <footer class="text-center">
+                    <div class="container">
+                        <p class="mb-0">&copy; 2025 DEVSCURICO - Sistema de Tickets de Soporte Técnico</p>
+                        <small>Desarrollado con Django 3.2 y Bootstrap 5</small>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <!-- Content for non-authenticated users -->
+    <div class="login-container">
+        {% block content_anonymous %}{% endblock %}
+    </div>
+    {% endif %}
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Mostrar fecha actual
+        function actualizarFecha() {
+            const fecha = new Date();
+            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+            const elementoFecha = document.getElementById('fecha-actual');
+            if (elementoFecha) {
+                elementoFecha.textContent = fechaFormateada;
+            }
+        }
+        
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', actualizarFecha);
+        
+        // Auto-cerrar alertas después de 5 segundos
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
